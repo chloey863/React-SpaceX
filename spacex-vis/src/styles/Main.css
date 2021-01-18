@@ -1,0 +1,17 @@
+.main {
+    position: relative;
+    height: 760px;
+}
+
+.left-side {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 760px;
+    width: 420px;
+}
+
+.right-side {
+    margin-left: 420px;
+    height: 760px;
+}
