@@ -1,9 +1,11 @@
-@import '~antd/dist/antd.css';
+@import '~antd/dist/antd.css';  /* Note: antd imported at first line */
 @import './styles/App.css';
 @import './styles/Header.css';
 @import './styles/Footer.css';
 @import './styles/Main.css';
 @import './styles/SatelliteSetting.css';
+@import './styles/SatelliteList.css';
+
 
 body {
   margin: 0;
