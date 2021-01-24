@@ -5,8 +5,11 @@ import { geoKavrayskiy7} from "d3-geo-projection"; // example: https://observabl
 // geoGraticule() is used to draw longitude and latitude on map; geoPath() is used to generate line
 import { geoGraticule, geoPath} from "d3-geo";
 import { select as d3Select } from 'd3-selection';
+import { schemeCategory10 } from "d3-scale-chromatic";
+import * as d3Scale from "d3-scale";
 import { WORLD_MAP_URL, SATELLITE_POSITION_URL, SAT_API_KEY } from "../../src/constants";
 import { timeFormat as d3TimeFormat } from "d3-time-format";
+import {Spin} from "antd";
 
 const width = 960;
 const height = 600;
@@ -23,6 +26,7 @@ class WorldMap extends Component {
         this.refMap = React.createRef();
         this.refTrack = React.createRef();
         this.map = null;
+        this.color = d3Scale.scaleOrdinal(schemeCategory10);
     }
 
     componentDidMount() {
@@ -98,6 +102,10 @@ class WorldMap extends Component {
             const { Latitude, Longitude, Elevation, Duration } = this.props.observerData;
             const endTime = Duration * 60;
 
+            this.setState({
+                isLoading: true
+            });
+
             // generate all satellites' url, store them as array
             const urls = this.props.satData.map( sat => {
                 // console.log(sat);
@@ -124,10 +132,10 @@ class WorldMap extends Component {
                         isDrawing: true
                     });
 
+                    // If not drawing, track satellite
                     if (!prevState.isDrawing) {
-                        // track satellite
                         this.track(res);
-                    } else {
+                    } else { // if it's already drawing, wait until drawing is completed
                         const oHint = document.getElementsByClassName("hint")[0];
                         oHint.innerHTML =
                             "Please wait for these satellite animation to finish before selection new ones!";
@@ -138,6 +146,7 @@ class WorldMap extends Component {
         }
     }
 
+    // track the real location of satellite
     track = data => {
         // corner case:
         if (!data[0].hasOwnProperty("positions")) {
@@ -175,8 +184,8 @@ class WorldMap extends Component {
             if (i >= len) {
                 clearInterval(timer);
                 this.setState({ isDrawing: false });
-                const oHint = document.getElementsByClassName("hint")[0];
-                oHint.innerHTML = "";
+                // const oHint = document.getElementsByClassName("hint")[0];
+                // oHint.innerHTML = "";
                 return;
             }
 
@@ -192,15 +201,51 @@ class WorldMap extends Component {
 
     }
 
+    // draw points that represent the satellite's location
+    drawSat = (sat, pos) => {
+        const { satlongitude, satlatitude } = pos;
+
+        if (!satlongitude || !satlatitude) {
+            return;
+        }
+
+        const { satname } = sat;
+        const nameWithNumber = satname.match(/\d+/g).join(""); // regular expression
+
+        const { projection, context2 } = this.map;
+        const xy = projection([satlongitude, satlatitude]);
+
+        // style/coloring for context2 canvas
+        context2.fillStyle = this.color(nameWithNumber);
+        // draw point
+        context2.beginPath();
+        // point shape
+        context2.arc(xy[0], xy[1], 4, 0, 2 * Math.PI);
+        // fill point shape with color
+        context2.fill();
+
+        // style for text for satellite's name and info
+        context2.font = "bold 11px sans-serif";
+        context2.textAlign = "center";
+        context2.fillText(nameWithNumber, xy[0], xy[1] + 14);
+    };
+
     render() {
+        const { isLoading } = this.state;
         return (
             <div className="map-box">
+                {isLoading ? (
+                    <div className="spinner">
+                        <Spin tip="Loading..." size="large" />
+                    </div>
+                ) : null }
                 <canvas className="map"
                         ref={this.refMap}>
                 </canvas>
                 <canvas className="track"
                         ref={this.refTrack}>
                 </canvas>
+                <div className="hint" />
             </div>
         );
     }
