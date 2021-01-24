@@ -93,14 +93,16 @@ class SatelliteSettingForm extends Component {
         // step1: collect data from the form
         // validateFields() from antd3 API
         e.preventDefault();
-        this.props.form.validateFields((err, values) => {
+        this.props.form.validateFields((err, value) => {
             if (!err) {
-                console.log('Received values of form: ', values);
-                // this.props.onShow(values);
+                console.log('Received values of form: ', value);
+
+                // step2: pass data to the Main component
+                this.props.onShow(value);
             }
         });
 
-        // step2: pass data to the Main component
+
 
     }
 }
