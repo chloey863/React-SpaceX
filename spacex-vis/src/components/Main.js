@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import SatelliteSetting from "./SatelliteSetting";
 import SatelliteList from "./SatelliteList";
+import WorldMap from "./WorldMap";
 import axios from "axios";
 
 import { NEARBY_SATELLITE, SAT_API_KEY, STARLINK_CATEGORY } from "../constants";
@@ -16,10 +17,6 @@ class Main extends Component {
             isLoadingList: false
         }
     }
-
-    // componentDidMount() {
-    //     // fetch data
-    // }
 
     showNearbySatellite = (setting) => {
         console.log("setting ->", setting);
@@ -74,7 +71,9 @@ class Main extends Component {
                     <SatelliteList satInfo={satInfo}
                                    isLoad={isLoadingList} /> {/*data communication*/}
                 </div>
-                <div className='right-side'>right side</div>
+                <div className='right-side'>
+                    <WorldMap />
+                </div>
             </div>
         );
     }
