@@ -45,12 +45,12 @@ class SatelliteSettingForm extends Component {
                     })(<InputNumber min={-180} max={180} placeholder={"Please input your Latitude"} style={{width: "100%"}} />)}
                 </Form.Item>
 
-                <Form.Item label="Evaluation (meters)">
-                    {getFieldDecorator("Evaluation", { // HOF, * decorator for UI
+                <Form.Item label="Elevation (meters)">
+                    {getFieldDecorator("Elevation", { // HOF, * decorator for UI
                         rules: [
                             {
                                 required: true,
-                                message: "Please input your Evaluation"
+                                message: "Please input your Elevation"
                             }
                         ]
                     })(<InputNumber min={-413} max={8850} placeholder={"Please input your Elevation"} style={{width: "100%"}} />)}

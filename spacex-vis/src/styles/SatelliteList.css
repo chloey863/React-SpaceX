@@ -8,3 +8,16 @@
 .btn-container {
     text-align: center;
 }
+
+.sat-list {
+    height: 300px;
+    /*slider for the list*/
+    overflow: scroll;
+}
+
+.spin-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 335px;
+}
