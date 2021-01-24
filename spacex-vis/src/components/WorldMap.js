@@ -138,7 +138,59 @@ class WorldMap extends Component {
         }
     }
 
+    track = data => {
+        // corner case:
+        if (!data[0].hasOwnProperty("positions")) {
+            throw new Error("no position data");
+            return;
+        }
 
+        // step 1. get # of positions.
+        const len = data[0].positions.length;
+        const { duration } = this.props.observerData;
+        const { context2 } = this.map;
+
+        // step 2. record the current time
+        let now = new Date();
+        let i = 0; // a counter to count the # of point draw so far
+
+        // step 3. for every 1000ms (0.1 second), draw a point on map to represent the satellite real location
+        let timer = setInterval(() => {
+            // record the current time when drawing
+            let ct = new Date();
+
+            let timePassed = i === 0 ? 0 : ct - now;
+            let time = new Date(now.getTime() + 60 * timePassed);
+
+            // clean everything on canvas before drawing a point
+            context2.clearRect(0, 0, width, height);
+
+            // drawing point
+            context2.font = "bold 14px sans-serif";
+            context2.fillStyle = "#333";
+            context2.textAlign = "center";
+            context2.fillText(d3TimeFormat(time), width / 2, 10);
+
+            // case 1: completed drawing all point when i >= len
+            if (i >= len) {
+                clearInterval(timer);
+                this.setState({ isDrawing: false });
+                const oHint = document.getElementsByClassName("hint")[0];
+                oHint.innerHTML = "";
+                return;
+            }
+
+            // case 2: if i < len, continue drawing next point
+            data.forEach(sat => {
+                const { info, positions } = sat;
+                // draw a point based on the sat's info and position
+                this.drawSat(info, positions[i]);
+            });
+
+            i += 60;
+        }, 1000);
+
+    }
 
     render() {
         return (
