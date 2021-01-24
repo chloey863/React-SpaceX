@@ -7,6 +7,11 @@ class SatelliteList extends Component {
         selected: []
     }
 
+    onShowMap = () => {
+        const { selected } = this.state;
+        this.props.onShowMap(selected);
+    }
+
     render() {
         // deconstruct/destruct data:
         // if satInfo is not null , get satInfo.above
@@ -21,7 +26,9 @@ class SatelliteList extends Component {
                     <Button className="sat-list-btn"
                             type="primary"
                             size="large"
-                            disabled={selected.length === 0}>Track on the map
+                            disabled={selected.length === 0}
+                            onClick={this.onShowMap}
+                    >Track on the map
                     </Button>
                 </div>
                 <hr/>
@@ -55,7 +62,8 @@ class SatelliteList extends Component {
     }
 
     onChange = (e) => {
-        console.log("checkbox is clicked!");
+        // console.log("checkbox is clicked!");
+
         // step 1: is satellite checked (i.e. check-box is clicked)?
         const { dataInfo, checked } = e.target;
 
@@ -64,7 +72,7 @@ class SatelliteList extends Component {
 
         // step 3: get new selected list
         const list = this.addOrRemove(dataInfo, checked, selected);
-        console.log(list);
+        // console.log(list);
 
         // step 4: update selected satellite list
         this.setState({

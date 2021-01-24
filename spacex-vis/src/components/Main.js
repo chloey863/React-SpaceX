@@ -6,22 +6,22 @@ import axios from "axios";
 
 import { NEARBY_SATELLITE, SAT_API_KEY, STARLINK_CATEGORY } from "../constants";
 
-
 class Main extends Component {
     constructor() {
         super();
         this.state = {
             satInfo: null,
-            settings: null,
+            satList: null,
+            setting: null,
             // initially, isLoadingList is false, because "Find Nearby Satellite" is not clicked yet
             isLoadingList: false
         }
     }
 
     showNearbySatellite = (setting) => {
-        console.log("setting ->", setting);
+        console.log("setting in showNearbySatellite() ->", setting);
         this.setState({
-            settings: setting
+            setting: setting
         });
 
         // fetch data
@@ -62,17 +62,28 @@ class Main extends Component {
             })
     }
 
+    showMap = (selected) => {
+        console.log("selected in showMap: ", selected);
+        this.setState(preState => ({
+            ...preState,
+            satList: [...selected]
+        }))
+    }
+
     render() {
-        const { satInfo, isLoadingList } = this.state;
+        const { satInfo, isLoadingList, satList, setting } = this.state;
         return (
             <div className='main'>
                 <div className='left-side'>
                     <SatelliteSetting onShow={this.showNearbySatellite} />
                     <SatelliteList satInfo={satInfo}
-                                   isLoad={isLoadingList} /> {/*data communication*/}
+                                   isLoad={isLoadingList} /*data communication*/
+                                   onShowMap={this.showMap}/>
                 </div>
                 <div className='right-side'>
-                    <WorldMap />
+                    <WorldMap satData={satList}
+                              observerData={setting}
+                    />
                 </div>
             </div>
         );
