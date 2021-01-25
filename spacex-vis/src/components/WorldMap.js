@@ -145,7 +145,7 @@ class WorldMap extends Component {
             });
         }
     }
-
+    
     // track the real location of satellite
     track = data => {
         // corner case:
